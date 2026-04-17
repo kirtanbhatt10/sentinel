@@ -3,13 +3,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // 🔹 Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// 🔹 Use correct model (IMPORTANT FIX)
+// 🔹 Use correct model
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",
 });
 
-// 🔹 Helper function
-async function runPrompt(prompt: string) {
+// 🔹 Helper function (FIXED RETURN TYPE)
+async function runPrompt(prompt: string): Promise<string> {
   const maxRetries = 3;
 
   for (let i = 0; i < maxRetries; i++) {
@@ -21,11 +21,14 @@ async function runPrompt(prompt: string) {
 
       if (i === maxRetries - 1) throw error;
 
-      // wait before retry (1s, 2s, 3s)
       await new Promise(res => setTimeout(res, (i + 1) * 1000));
     }
   }
+
+  // 🔥 IMPORTANT: fallback return (TS fix)
+  return "";
 }
+
 // 🔹 Main function
 export async function analyzeVariant(caption: string) {
   try {
@@ -45,6 +48,11 @@ Respond STRICTLY in JSON:
 `;
 
     const response = await runPrompt(prompt);
+
+    // 🔥 Safety check
+    if (!response) {
+      return { error: "Empty response from Gemini" };
+    }
 
     // 🔥 Clean + parse JSON safely
     try {
