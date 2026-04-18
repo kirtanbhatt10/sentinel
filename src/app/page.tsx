@@ -1,58 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [original, setOriginal] = useState<File | null>(null);
-  const [suspect, setSuspect] = useState<File | null>(null);
-  const [caption, setCaption] = useState("");
-  const [result, setResult] = useState("");
-
-  const handleSubmit = async () => {
-    if (!original || !suspect) {
-      return alert("Upload both images");
-    }
-
-    const formData = new FormData();
-    formData.append("originalImage", original);
-    formData.append("suspectImage", suspect);
-    formData.append("caption", caption);
-
-    const res = await fetch("/api/analyze-image", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    setResult(JSON.stringify(data, null, 2));
-  };
+  const router = useRouter();
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Sentinel AI</h1>
+    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6">
 
-      <h3>Upload Original Content</h3>
-      <input type="file" onChange={(e) => setOriginal(e.target.files?.[0] || null)} />
+      {/* HERO */}
+      <h1 className="text-6xl font-bold text-center leading-tight">
+        Protect Sports Content <br />
+        with <span className="text-green-400">AI</span>
+      </h1>
 
-      <br /><br />
+      <p className="text-gray-400 mt-6 text-center max-w-xl">
+        Detect piracy, content reuse, and misuse using advanced AI + visual analysis.
+      </p>
 
-      <h3>Upload Suspect Content</h3>
-      <input type="file" onChange={(e) => setSuspect(e.target.files?.[0] || null)} />
+      <button
+        onClick={() => router.push("/analyze")}
+        className="mt-8 px-8 py-3 bg-green-500 text-black rounded-lg font-semibold hover:bg-green-400 transition"
+      >
+        Start Analysis
+      </button>
 
-      <br /><br />
-
-      <input
-        type="text"
-        placeholder="Enter caption"
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-      />
-
-      <br /><br />
-
-      <button onClick={handleSubmit}>Analyze</button>
-
-      <pre>{result}</pre>
     </div>
   );
 }
