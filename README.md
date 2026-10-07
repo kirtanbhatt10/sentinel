@@ -1,236 +1,123 @@
 # Sentinel AI
 
-> AI-powered sports media protection platform for detecting unauthorized reuse, duplication, manipulation, and potential IP misuse of digital assets.
+**Detects reused, duplicated and manipulated copies of digital media by combining cryptographic fingerprints, perceptual hashing and AI reasoning into one verdict.**
 
-Sentinel AI is a prototype platform built to help sports organizations, teams, leagues, broadcasters, and media owners protect valuable visual content. It combines **AI reasoning**, **cryptographic fingerprinting**, **perceptual hashing**, and a **protected asset vault** to identify suspicious reuse of images and branded media.
+[Live demo](https://google-solution-challange-iota.vercel.app) · Built by Team Hexacore for the Google Solution Challenge
 
----
+Sports organisations, broadcasters and sponsors lose value when official graphics are reposted,
+edited or used in scam promotions. Sentinel lets a rights holder register an original asset, then
+check any suspicious file against it and get a risk level, a similarity score and a recommended
+action.
 
-# 🚀 Live Vision
+> **Status: prototype.** The vault and scan history are stored in the browser's `localStorage`, so
+> they are per device and not shared between users. There are no accounts yet.
 
-Sports media loses value through:
-
-- Unauthorized reposting
-- Edited copies of official graphics
-- Scam promotions using branded assets
-- Impersonation pages
-- Reused match posters
-- Manipulated sponsor creatives
-- Unlicensed highlight content
-
-Sentinel AI aims to provide a smart protection layer that helps rights holders detect and respond quickly.
-
----
-
-# ✨ Key Features
-
-## 🔐 1. Protect Original Assets
-
-Upload official media and register it into the Sentinel Vault.
-
-Each protected asset receives:
-
-- Unique Asset ID
-- SHA-256 cryptographic fingerprint
-- Perceptual visual hash
-- Protection timestamp
-
----
-
-## 🧠 2. AI Misuse Detection
-
-Upload suspicious content and Sentinel analyzes:
-
-- Visual similarity
-- Structural reuse
-- Possible transformations
-- Risk level
-- Reuse likelihood
-- Recommended action
-
----
-
-## 🧬 3. Multi-Layer Detection Engine
-
-Sentinel combines:
-
-### Cryptographic Fingerprinting
-
-Detects exact file duplicates.
-
-### Perceptual Hashing
-
-Detects visually similar copies even after:
-
-- Cropping
-- Resizing
-- Filters
-- Minor edits
-
-### AI Reasoning
-
-Uses Gemini + fallback systems for contextual misuse classification.
-
----
-
-## 🏛️ 4. Sentinel Vault
-
-A protected registry of uploaded original assets.
-
-Tracks:
-
-- Protected media
-- IDs
-- Timestamps
-- Matchable signatures
-
----
-
-## 📊 5. Dashboard Analytics
-
-Visual overview of:
-
-- Total scans
-- Risk levels
-- Average similarity
-- Recent detections
-
----
-
-## 🛡️ 6. Reliability Layer
-
-Sentinel is designed with multi-layer fallback logic:
+## How it works
 
 ```text
-Gemini Primary
-↓
-Gemini Secondary
-↓
-Cohere Fallback
-↓
-Local Sentinel Rule Engine
+Digital asset
+   → SHA-256 fingerprint        exact duplicates
+   → Perceptual hash            visually similar copies (crop, resize, filter, minor edits)
+   → Similarity analysis        how close the suspect is to the original
+   → AI reasoning               what kind of misuse it looks like
+   → Verdict                    risk level, classification, recommended action
+```
 
-This ensures analysis continues even during model outages.
+AI reasoning is built to keep working when a model is unavailable. Each request falls through this
+chain until one layer answers:
 
-🧱 Tech Stack
-Frontend
-Next.js 16
-React
-TypeScript
-Tailwind CSS
-Framer Motion
-AI Models
-Google Gemini API
-Cohere API (fallback)
-Detection Engine
-SHA-256 hashing
-Perceptual image hashing
-Local similarity engine
-Storage (Prototype)
-Browser LocalStorage
-📂 Project Structure
-src/
- ├ app/
- │   ├ page.tsx            # Landing page
- │   ├ analyze/page.tsx    # Main analysis system
- │   ├ vault/page.tsx      # Protected asset registry
- │   ├ dashboard/page.tsx  # Metrics dashboard
- │   └ api/analyze-image/route.ts
- │
- ├ components/ui/
- │   ├ UploadCard.tsx
- │   ├ ProgressBar.tsx
- │   ├ StatusBadge.tsx
- │   └ Logo.tsx
-⚙️ Installation
-Clone Repository
-git clone https://github.com/yourusername/sentinel-ai.git
-cd sentinel-ai
-Install Dependencies
-npm install
-Add Environment Variables
+```text
+Gemini 2.5 Flash → Gemini 1.5 Flash-8B → Cohere Command R+ → local rule engine
+```
 
-Create:
+## Features
 
-.env.local
+| | |
+| --- | --- |
+| **Protect an asset** | Register official media in the vault. Each asset gets an ID, a SHA-256 fingerprint, a perceptual hash and a timestamp. |
+| **Analyse a suspect** | Upload the original and the suspicious file to get visual similarity, likely transformations, risk level and reuse likelihood. |
+| **Vault** | A registry of protected originals and their matchable signatures. |
+| **Dashboard** | Total scans, risk-level breakdown, average similarity and recent detections. |
+| **Fallback chain** | Analysis continues through model outages, ending in a local rule engine that needs no API. |
 
-Add:
+Example verdict:
 
-GEMINI_API_KEY=your_gemini_key
-COHERE_API_KEY=your_cohere_key
-▶️ Run Locally
-npm run dev
-
-Open:
-
-http://localhost:3000
-🧪 How to Use
-Protect an Asset
-Open Analyze page
-Upload official content
-Click Protect This Asset
-Asset stored in Vault
-Analyze Suspicious Content
-Upload original media
-Upload suspicious media
-Click Analyze Content
-View threat report
-📌 Example Output
+```json
 {
   "riskLevel": "High",
   "similarityScore": 88,
   "classification": "Unauthorized Copy",
   "recommendedAction": "Issue takedown request"
 }
-🎯 Real World Use Cases
-Sports Leagues
+```
 
-Protect match graphics, posters, highlights.
+## Install and run
 
-Clubs & Teams
+**Requirements:** Node.js 20 or later and npm.
 
-Detect fake promotions or reused branding.
+```bash
+git clone https://github.com/kirtanbhatt10/sentinel.git
+cd sentinel
+npm install
+```
 
-Broadcasters
+Create `.env.local` in the project root:
 
-Track unauthorized reposting of official media.
+```bash
+GEMINI_API_KEY=your_gemini_key
+COHERE_API_KEY=your_cohere_key
+```
 
-Sponsors
+Then start the app and open <http://localhost:3000>:
 
-Protect campaign creatives from misuse.
+```bash
+npm run dev
+```
 
-🔮 Future Roadmap
-Video fingerprinting
-Watermark intelligence
-Real-time web scanning
-Firebase / Cloud database
-Multi-user organization accounts
-Rights management workflows
-Automated takedown notices
-API integrations for broadcasters
-🏆 Why Sentinel Matters
+Without keys, the app still returns verdicts from the local rule engine.
 
-Digital sports content is valuable intellectual property.
+## Using it
 
-Sentinel helps organizations move from:
+1. **Protect:** open **Analyze**, upload the official file and choose **Protect This Asset**. It appears in the **Vault**.
+2. **Check:** upload the original and the suspicious file, then choose **Analyze Content** to see the threat report.
+3. **Review:** open the **Dashboard** for totals and recent detections.
 
-Manual monitoring
-↓
-Reactive enforcement
+## Tech stack
 
-to:
+| Layer | Used |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS 4, Framer Motion |
+| AI | Google Gemini API, Cohere API as fallback |
+| Detection | SHA-256 hashing, perceptual image hashing, local similarity engine |
+| Storage | Browser `localStorage` (prototype) |
+| Hosting | Vercel |
 
-Automated detection
-↓
-Faster response
-↓
-Stronger protection
+## Project structure
 
-👨‍💻 Author
-Team:- Hexacore
-Built as an innovation prototype for modern sports media protection for the Google solution challange.
+```text
+src/
+├── app/
+│   ├── page.tsx                    Landing page
+│   ├── analyze/page.tsx            Protect and analyse flow, hashing
+│   ├── vault/page.tsx              Protected asset registry
+│   ├── dashboard/page.tsx          Metrics
+│   └── api/analyze-image/route.ts  AI reasoning and fallback chain
+├── components/ui/                  Upload card, progress bar, status badge, logo
+└── lib/                            Gemini and Firebase clients
+```
 
+## Limitations
 
-⭐ If You Like This Project
+- Images only; video is not fingerprinted.
+- Data lives in one browser. Clearing site data clears the vault.
+- No authentication, organisations or audit trail.
+- Similarity is measured against assets you supply; there is no web-wide scanning.
 
-Star the repository and support future development.
+## Roadmap
+
+- [ ] Cloud database and multi-user organisation accounts
+- [ ] Video fingerprinting
+- [ ] Watermark detection
+- [ ] Real-time web scanning
+- [ ] Rights-management workflow with automated takedown notices
